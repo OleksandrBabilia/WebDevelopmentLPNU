@@ -33,3 +33,7 @@
     top: -20px;
     right: -2px;
 }
+
+.icon-holder:focus {
+    box-shadow: none;
+}

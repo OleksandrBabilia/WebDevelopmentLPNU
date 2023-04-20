@@ -155,8 +155,8 @@ $(document).on('click', '#addData', function(event)
                     <td>' + gender + '</td>\
                     <td>' + dob + '</td>\
                     <td><figure class="circle-green"></figure></td>' 
-                    + '<td><button class="btn bg-transparent edit-btn"><i class=" far fa-edit edit-btn"></i></button>\
-                    <button class="btn bg-transparent delete-btn"><i class="fas fa-trash-alt "></i></button></td></tr>';
+                    + '<td><button class="btn bg-transparent edit-btn icon-holder"><i class=" far fa-edit edit-btn"></i></button>\
+                    <button class="btn bg-transparent delete-btn icon-holder"><i class="fas fa-trash-alt "></i></button></td></tr>';
 
                 $('table tbody').append(html);
                 $('#addModal').modal('hide');
