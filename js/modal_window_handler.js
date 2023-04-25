@@ -69,7 +69,7 @@ $(document).on('click', '#addData', function(event)
 {   
     event.preventDefault();
 
-    const json = {
+    const user = {
         id: $("#id_student").val(),
         group: $("#group").val(), 
         firstName: $("#name").val(), 
@@ -82,9 +82,8 @@ $(document).on('click', '#addData', function(event)
 
     fetch('server.php', {
         method: 'POST',
-        body: JSON.stringify(json)
-    }).then(responce => responce.text())
-    .then(data => {
+        body: JSON.stringify(user)
+    }).then(data => {
         const responceObject = JSON.parse(data);
         console.log(responceObject);
 
@@ -131,12 +130,12 @@ $(document).on('click', '#addData', function(event)
         }
         
         if (responceObject.success === true) {
-            if (json.id)
+            if (user.id)
             {  
-                currentRow.find('td:nth-child(3)').text(json.firstName + ' ' + json.lastName);
-                currentRow.find('td:nth-child(4)').text(json.gender);
-                currentRow.find('td:nth-child(5)').text(json.birthday);
-                currentRow.find('td:nth-child(2)').text(json.group);
+                currentRow.find('td:nth-child(3)').text(user.firstName + ' ' + user.lastName);
+                currentRow.find('td:nth-child(4)').text(user.gender);
+                currentRow.find('td:nth-child(5)').text(user.birthday);
+                currentRow.find('td:nth-child(2)').text(user.group);
                         
                 $('#addModal').modal('hide');
             }
@@ -146,10 +145,10 @@ $(document).on('click', '#addData', function(event)
                 new_user_id = id;
                 var html =  '<tr class="text-center" data-id="' + new_user_id + '">' +
                     '<td><input type="checkbox" name="select"></td>\
-                    <td>' + json.group + '</td>\
-                    <td>' + json.firstName + ' ' + json.lastName + '</td>\
-                    <td>' + json.gender + '</td>\
-                    <td>' + json.birthday + '</td>\
+                    <td>' + user.group + '</td>\
+                    <td>' + user.firstName + ' ' + user.lastName + '</td>\
+                    <td>' + user.gender + '</td>\
+                    <td>' + user.birthday + '</td>\
                     <td><figure class="circle-green"></figure></td>' 
                     + '<td><button class="btn bg-transparent edit-btn icon-holder"><i class=" far fa-edit edit-btn"></i></button>\
                     <button class="btn bg-transparent delete-btn icon-holder"><i class="fas fa-trash-alt "></i></button></td></tr>';
