@@ -13,6 +13,8 @@ checkAll.addEventListener('change', () =>
 });
 
 $("#add_student").on("click", function() {
+    clearModal();
+
     $('#id_student').val('');
     $("#addModal h5").html("Add student");
 
@@ -26,6 +28,8 @@ $("#add_student").on("click", function() {
 var currentRow;
 
 $('table').on('click', '.edit-btn', function() {
+    clearModal();
+
     $("#addModal h5").html("Edit student");
 
     var user_id = $(this).closest("tr").data("id")
@@ -73,14 +77,6 @@ $(document).on('click', '#addData', function(event)
         gender: $("#gender").val(), 
         birthday: $("#dob").val()
     };
-
-    var user_id = $("#id_student").val();
-    var name = $('#name').val();
-    var surname = $('#surname').val();
-    var dob = $('#dob').val();
-    var gender = $('#gender').val();
-    var group = $('#group').val();
-
 
     clearModal();
 
@@ -135,12 +131,12 @@ $(document).on('click', '#addData', function(event)
         }
         
         if (responceObject.success === true) {
-            if (user_id)
+            if (json.id)
             {  
-                currentRow.find('td:nth-child(3)').text(name + ' ' + surname);
-                currentRow.find('td:nth-child(4)').text(gender);
-                currentRow.find('td:nth-child(5)').text(dob);
-                currentRow.find('td:nth-child(2)').text(group);
+                currentRow.find('td:nth-child(3)').text(json.firstName + ' ' + json.lastName);
+                currentRow.find('td:nth-child(4)').text(json.gender);
+                currentRow.find('td:nth-child(5)').text(json.birthday);
+                currentRow.find('td:nth-child(2)').text(json.group);
                         
                 $('#addModal').modal('hide');
             }
@@ -150,10 +146,10 @@ $(document).on('click', '#addData', function(event)
                 new_user_id = id;
                 var html =  '<tr class="text-center" data-id="' + new_user_id + '">' +
                     '<td><input type="checkbox" name="select"></td>\
-                    <td>' + group + '</td>\
-                    <td>' + name + " " + surname + '</td>\
-                    <td>' + gender + '</td>\
-                    <td>' + dob + '</td>\
+                    <td>' + json.group + '</td>\
+                    <td>' + json.firstName + ' ' + json.lastName + '</td>\
+                    <td>' + json.gender + '</td>\
+                    <td>' + json.birthday + '</td>\
                     <td><figure class="circle-green"></figure></td>' 
                     + '<td><button class="btn bg-transparent edit-btn icon-holder"><i class=" far fa-edit edit-btn"></i></button>\
                     <button class="btn bg-transparent delete-btn icon-holder"><i class="fas fa-trash-alt "></i></button></td></tr>';

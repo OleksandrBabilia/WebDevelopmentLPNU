@@ -5,29 +5,29 @@
         $data = json_decode(file_get_contents('php://input'), true);
 
         if (empty($data['group'])) {
-            $errors['group'] = 'Group is required !';
+            $errors['group'] = 'Group field could not be empty.';
         }
 
         if (empty($data['firstName'])) {
-            $errors['firstName'] = 'First name is required !';
+            $errors['firstName'] = 'First name field could not be empty.';
         } elseif (!preg_match('/^[a-zA-Z]+$/', $data['firstName'])) {
-            $errors['firstName'] = 'First name can only contain letters';
+            $errors['firstName'] = 'First name can only contain letters.';
         }
 
         if (empty($data['lastName'])) {
-            $errors['lastName'] = 'Last name is required !';
+            $errors['lastName'] = 'Last name field could not be empty';
         } elseif (!preg_match('/^[a-zA-Z]+$/', $data['lastName'])) {
-            $errors['lastName'] = 'Last name can only contain letters';
+            $errors['lastName'] = 'Last name can only contain letters.';
         }
 
         if (empty($data['gender'])) {
-            $errors['gender'] = 'Gender is required !';
+            $errors['gender'] = 'Gender field could not be empty.';
         }
 
         if (empty($data['birthday'])) {
-            $errors['birthday'] = 'Birthday is required !';
-        } elseif (strtotime($data['birthday']) < strtotime('1920-01-01') || strtotime($data['birthday']) > strtotime('2007-01-01')) {
-            $errors['birthday'] = 'Birday must be from 1920 year up to 2007 !';
+            $errors['birthday'] = 'Birthday field could not be empty.';
+        } elseif (strtotime($data['birthday']) < strtotime('1950-01-01') || strtotime($data['birthday']) > strtotime('2005-01-01')) {
+            $errors['birthday'] = 'Birthday must be from 1950 year up to 2005.';
         }
 
         if (count($errors) > 0) {
