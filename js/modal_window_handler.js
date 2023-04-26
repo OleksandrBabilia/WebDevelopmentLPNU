@@ -1,4 +1,32 @@
-var id = 1;
+var id = 0;
+
+var genders = {
+    "1": "Male",
+    "2": "Female",
+};
+
+var groups = {
+    "1": "PZ-21",
+    "2": "PZ-22",
+    "3": "PZ-23",
+    "4": "PZ-24",
+    "5": "PZ-25",
+    "6": "PZ-26"
+};
+
+var gendersReverse = {
+    "Male": "1",
+    "Female": "2",
+};
+
+var groupsReverse = {
+    "PZ-21": "1",
+    "PZ-22": "2",
+    "PZ-23": "3",
+    "PZ-24": "4",
+    "PZ-25": "5",
+    "PZ-26": "6"
+};
 
 var checkAll = document.querySelector('#check-all');
 
@@ -21,8 +49,7 @@ $("#add_student").on("click", function() {
     $('#name').val('');
     $('#surname').val('');
     $('#dob').val('');
-    $('#gender').val('M');
-    $('#group').val('PZ-21');
+
 })
 
 var currentRow;
@@ -40,12 +67,12 @@ $('table').on('click', '.edit-btn', function() {
     var gender = currentRow.find('td:nth-child(4)').text();      
     var dob = currentRow.find('td:nth-child(5)').text();
     var group = currentRow.find('td:nth-child(2)').text();
-				
+    
     $('#name').val(name);
     $('#surname').val(surname);
-    $('#gender').val(gender);
+    $('#gender').val(gendersReverse[gender]);
     $('#dob').val(dob);
-    $('#group').val(group);
+    $('#group').val(groupsReverse[group]);
 				
     $('#addModal').modal('show');
 });
@@ -70,7 +97,7 @@ $(document).on('click', '#addData', function(event)
     event.preventDefault();
 
     const user = {
-        id: $("#id_student").val(),
+        id: $("#id_student").val() === "" ? String(id + 1) : $("#id_student").val(),
         group: $("#group").val(), 
         firstName: $("#name").val(), 
         lastName: $("#surname").val(),
@@ -79,77 +106,31 @@ $(document).on('click', '#addData', function(event)
     };
 
     clearModal();
-
-    fetch('server.php', {
+    
+    $.ajax({
+        url: 'server.php',
         method: 'POST',
-        body: JSON.stringify(user)
-    }).then(response => response.text())
-    .then(data => {
-        const responseObject = JSON.parse(data);
-        console.log(responseObject);
-
-        if (responseObject.success === false) {
-            if (responseObject.errors.group) {
-                $("#group").addClass('is-invalid');
-                $("#group-error").text(responseObject.errors.group);
-                $("#group-error").prop('hidden', false);
-            } else {
-                $("#group").addClass('is-valid');
-            }
-            
-            if (responseObject.errors.firstName) {
-                $("#name").addClass('is-invalid');
-                $("#first-name-error").text(responseObject.errors.firstName);
-                $("#first-name-error").prop('hidden', false);
-            } else {
-                $("#name").addClass('is-valid');
-            }
-
-            if (responseObject.errors.lastName) {
-                $("#surname").addClass('is-invalid');
-                $("#last-name-error").text(responseObject.errors.lastName);
-                $("#last-name-error").prop('hidden', false);
-            } else {
-                $("#surname").addClass('is-valid');
-            }
-
-            if (responseObject.errors.gender) {
-                $("#gender").addClass('is-invalid');
-                $("#gender-error").text(responseObject.errors.gender);
-                $("#gender-error").prop('hidden', false);
-            } else {
-                $("#gender").addClass('is-valid');
-            }
-
-            if (responseObject.errors.birthday) {
-                $("#dob").addClass('is-invalid');
-                $("#birthday-error").text(responseObject.errors.birthday);
-                $("#birthday-error").prop('hidden', false);
-            } else {
-                $("#dob").addClass('is-valid');
-            }
-        }
-        
-        if (responseObject.success === true) {
-            if (user.id)
+        data: user,
+        dataType: 'json',
+        success: function(response) {
+            if ($("#id_student").val())
             {  
-                currentRow.find('td:nth-child(3)').text(user.firstName + ' ' + user.lastName);
-                currentRow.find('td:nth-child(4)').text(user.gender);
-                currentRow.find('td:nth-child(5)').text(user.birthday);
-                currentRow.find('td:nth-child(2)').text(user.group);
+                currentRow.find('td:nth-child(3)').text(response.user.firstName + ' ' + response.user.lastName);
+                currentRow.find('td:nth-child(4)').text(genders[response.user.gender]);
+                currentRow.find('td:nth-child(5)').text(response.user.birthday);
+                currentRow.find('td:nth-child(2)').text(groups[response.user.group]);
                         
                 $('#addModal').modal('hide');
             }
             else
             {
                 id++;
-                new_user_id = id;
-                var html =  '<tr class="text-center" data-id="' + new_user_id + '">' +
+                var html =  '<tr class="text-center" data-id="' + response.user.id + '">' +
                     '<td><input type="checkbox" name="select"></td>\
-                    <td>' + user.group + '</td>\
-                    <td>' + user.firstName + ' ' + user.lastName + '</td>\
-                    <td>' + user.gender + '</td>\
-                    <td>' + user.birthday + '</td>\
+                    <td>' + groups[response.user.group] + '</td>\
+                    <td>' + response.user.firstName + ' ' + user.lastName + '</td>\
+                    <td>' + genders[response.user.gender] + '</td>\
+                    <td>' + response.user.birthday + '</td>\
                     <td><figure class="circle-green"></figure></td>' 
                     + '<td><button class="btn bg-transparent edit-btn icon-holder"><i class=" far fa-edit edit-btn"></i></button>\
                     <button class="btn bg-transparent delete-btn icon-holder"><i class="fas fa-trash-alt "></i></button></td></tr>';
@@ -157,11 +138,58 @@ $(document).on('click', '#addData', function(event)
                 $('table tbody').append(html);
                 $('#addModal').modal('hide');
             }
-        }  
-    }).catch(error => {
-        console.error(error);
+        }, 
+        error: function(xhr, error) {
+          if (xhr.status === 400)
+          {
+            var response = JSON.parse(xhr.responseText);
+            if (response.errors.group) {
+                $("#group").addClass('is-invalid');
+                $("#group-error").text(response.errors.group);
+                $("#group-error").prop('hidden', false);
+            } else {
+                $("#group").addClass('is-valid');
+            }
+            
+            if (response.errors.firstName) {
+                $("#name").addClass('is-invalid');
+                $("#first-name-error").text(response.errors.firstName);
+                $("#first-name-error").prop('hidden', false);
+            } else {
+                $("#name").addClass('is-valid');
+            }
+
+            if (response.errors.lastName) {
+                $("#surname").addClass('is-invalid');
+                $("#last-name-error").text(response.errors.lastName);
+                $("#last-name-error").prop('hidden', false);
+            } else {
+                $("#surname").addClass('is-valid');
+            }
+
+            if (response.errors.gender) {
+                $("#gender").addClass('is-invalid');
+                $("#gender-error").text(response.errors.gender);
+                $("#gender-error").prop('hidden', false);
+            } else {
+                $("#gender").addClass('is-valid');
+            }
+
+            if (response.errors.birthday) {
+                $("#dob").addClass('is-invalid');
+                $("#birthday-error").text(response.errors.birthday);
+                $("#birthday-error").prop('hidden', false);
+            } else {
+                $("#dob").addClass('is-valid');
+            }
+          }
+          else {
+            alert("Error: " + error);
+          }
+        }
     });
 });
+
 
 $('table').on('click', '.delete-btn', function() 
 {

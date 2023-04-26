@@ -2,35 +2,47 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //Error Code, Gender, Group by id, ID, parse through POST, Select, use AJAX, header
         $errors = array();
-        $group = $_POST['user']['group'];
-        $user = json_decode(file_get_contents('php://input'), true);
+        $user = array(
+            'id' => $_POST['id'],
+            'firstName' => $_POST['firstName'],
+            'lastName' => $_POST['lastName'], 
+            'gender' => $_POST['gender'],
+            'birthday' => $_POST['birthday'],
+            'group' => $_POST['group']
+        );
 
-        if (empty($user['group'])) {
+        if ($user['group'] === "0") {
             $errors['group'] = 'Group field could not be empty.';
         }
 
-        if (empty($user['firstName'])) {
+        if (!$user['firstName']) {
             $errors['firstName'] = 'First name field could not be empty.';
         } 
 
-        if (empty($user['lastName'])) {
+        if (!$user['lastName']) {
             $errors['lastName'] = 'Last name field could not be empty';
         } 
 
-        if (empty($user['gender'])) {
+        if ($user['gender'] === "0") {
             $errors['gender'] = 'Gender field could not be empty.';
         }
 
-        if (empty($user['birthday'])) {
+        if (!$user['birthday']) {
             $errors['birthday'] = 'Birthday field could not be empty.';
         } 
 
         if ($errors) {
-            echo json_encode(array('success' => false, 'errors' => $errors));
+            header('HTTP/1.1 400 Bad Request');
+            header('Content-Type: application/json');
+            echo json_encode(array('errors' => $errors));
         } else {
+            header('HTTP/1.1 200 Success');
+            header('Content-Type: application/json');
             echo json_encode(array('success' => true, 'user' => $user));
         }
     }else {
-        echo json_encode(array('success' => false, 'errors' => 'Invalid request method.'));
+        header('HTTP/1.1 405 Method Not Allowed');
+        header('Content-Type: application/json');
+        echo json_encode(array('errors' => 'Invalid request method.'));
     }
 ?>

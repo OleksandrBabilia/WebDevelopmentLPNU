@@ -108,12 +108,10 @@
                 <input type="number" class="d-none" id="id_student">
                 <label for="group">Group</label>
                 <select class="form-control" id="group">
-                <option value="0" selected>
-                  Select group 
-                </option>
-                  <?php foreach($groups_arr as $key => $group) { ?>
-                    <option value="<?= $key ?> "><?= $group ?></option>
-                 <?php  } ?>
+                  <option value="0">Select group</option>
+                    <?php foreach($groups_arr as $key => $group) { ?>
+                      <option value="<?= $key ?>"><?=$group?></option>
+                    <?php  } ?>
                 </select>
                 <div id="group-error" class="invalid-feedback" hidden>
 
@@ -136,8 +134,11 @@
               <div class="form-group">
                 <label for="gender">Gender</label>
                 <select class="form-control" id="gender">
-                  <option value="M">M</option>
-                  <option value="F">F</option>
+                <option value="0">Select gender</option>
+                  <?php foreach($genders_arr as $key => $gender) { ?>
+                      <option value="<?= $key ?>"><?= $gender ?></option>
+                  <?php  } ?>
+            
                 </select>
                 <div id="gender-error" class="invalid-feedback" hidden>
 
