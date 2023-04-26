@@ -83,53 +83,54 @@ $(document).on('click', '#addData', function(event)
     fetch('server.php', {
         method: 'POST',
         body: JSON.stringify(user)
-    }).then(data => {
-        const responceObject = JSON.parse(data);
-        console.log(responceObject);
+    }).then(response => response.text())
+    .then(data => {
+        const responseObject = JSON.parse(data);
+        console.log(responseObject);
 
-        if (responceObject.success === false) {
-            if (responceObject.errors.group) {
+        if (responseObject.success === false) {
+            if (responseObject.errors.group) {
                 $("#group").addClass('is-invalid');
-                $("#group-error").text(responceObject.errors.group);
+                $("#group-error").text(responseObject.errors.group);
                 $("#group-error").prop('hidden', false);
             } else {
                 $("#group").addClass('is-valid');
             }
             
-            if (responceObject.errors.firstName) {
+            if (responseObject.errors.firstName) {
                 $("#name").addClass('is-invalid');
-                $("#first-name-error").text(responceObject.errors.firstName);
+                $("#first-name-error").text(responseObject.errors.firstName);
                 $("#first-name-error").prop('hidden', false);
             } else {
                 $("#name").addClass('is-valid');
             }
 
-            if (responceObject.errors.lastName) {
+            if (responseObject.errors.lastName) {
                 $("#surname").addClass('is-invalid');
-                $("#last-name-error").text(responceObject.errors.lastName);
+                $("#last-name-error").text(responseObject.errors.lastName);
                 $("#last-name-error").prop('hidden', false);
             } else {
                 $("#surname").addClass('is-valid');
             }
 
-            if (responceObject.errors.gender) {
+            if (responseObject.errors.gender) {
                 $("#gender").addClass('is-invalid');
-                $("#gender-error").text(responceObject.errors.gender);
+                $("#gender-error").text(responseObject.errors.gender);
                 $("#gender-error").prop('hidden', false);
             } else {
                 $("#gender").addClass('is-valid');
             }
 
-            if (responceObject.errors.birthday) {
+            if (responseObject.errors.birthday) {
                 $("#dob").addClass('is-invalid');
-                $("#birthday-error").text(responceObject.errors.birthday);
+                $("#birthday-error").text(responseObject.errors.birthday);
                 $("#birthday-error").prop('hidden', false);
             } else {
                 $("#dob").addClass('is-valid');
             }
         }
         
-        if (responceObject.success === true) {
+        if (responseObject.success === true) {
             if (user.id)
             {  
                 currentRow.find('td:nth-child(3)').text(user.firstName + ' ' + user.lastName);

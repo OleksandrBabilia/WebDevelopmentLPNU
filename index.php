@@ -12,6 +12,7 @@
     <link rel="manifest" href="manifest.json" />
   </head>
   <body>
+    <?php include('options.php'); ?>
     <header>
 
       <nav class="navbar navbar-light ">
@@ -107,12 +108,12 @@
                 <input type="number" class="d-none" id="id_student">
                 <label for="group">Group</label>
                 <select class="form-control" id="group">
-                  <option value="PZ-21">PZ-21</option>
-                  <option value="PZ-22">PZ-22</option>
-                  <option value="PZ-23">PZ-23</option>
-                  <option value="PZ-24">PZ-24</option>
-                  <option value="PZ-25">PZ-25</option>
-                  <option value="PZ-26">PZ-26</option>
+                <option value="0" selected>
+                  Select group 
+                </option>
+                  <?php foreach($groups_arr as $key => $group) { ?>
+                    <option value="<?= $key ?> "><?= $group ?></option>
+                 <?php  } ?>
                 </select>
                 <div id="group-error" class="invalid-feedback" hidden>
 
