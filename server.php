@@ -36,9 +36,9 @@
             header('Content-Type: application/json');
             echo json_encode(array('errors' => $errors));
         } else {
-            header('HTTP/1.1 200 Success');
+            header('HTTP/1.1 200 OK');
             header('Content-Type: application/json');
-            echo json_encode(array('success' => true, 'user' => $user));
+            echo json_encode(array('success' => true, 'user' => $user, 'errors' => null));
         }
     }else {
         header('HTTP/1.1 405 Method Not Allowed');

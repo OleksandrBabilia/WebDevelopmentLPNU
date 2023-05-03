@@ -183,7 +183,7 @@ $(document).on('click', '#addData', function(event)
                 $("#dob").addClass('is-valid');
             }
           }
-          else {
+          else {//
             alert("Error: " + error);
           }
         }

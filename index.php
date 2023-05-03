@@ -12,7 +12,7 @@
     <link rel="manifest" href="manifest.json" />
   </head>
   <body>
-    <?php include('options.php'); ?>
+    <?php include_once('constants.php'); ?>
     <header>
 
       <nav class="navbar navbar-light ">
@@ -23,7 +23,7 @@
           </a>
           <div class="dropdown-menu" aria-labelledby="link-dropdown">
             <h6><a class="nav-link disabled" href="#">Dashboard</a></h6>
-            <h6><a class="nav-link active" href="file:///C:/Users/djess/OneDrive/Desktop/4%20SEM/Labs/PVI/Lab1/lab1_2.0/index.html">Students</a></h6>
+            <h6><a class="nav-link active" href="#">Students</a></h6>
             <h6><a class="nav-link disabled" href="#">Tasks</a></h6>
           </div>
         </div> 
