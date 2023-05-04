@@ -1,4 +1,5 @@
 var id = 0;
+var currentRow;
 
 var genders = {
     "1": "Male",
@@ -28,17 +29,21 @@ var groupsReverse = {
     "PZ-26": "6"
 };
 
-var checkAll = document.querySelector('#check-all');
+$(document).ready(function()
+{
+    var checkAll = document.querySelector('#check-all');
+    checkAll.addEventListener('change', () => 
+    {
+        getRowCheckboxes().forEach(checkbox => checkbox.checked = checkAll.checked);
+    });
+
+    updateTable();
+});
 
 function getRowCheckboxes() 
 {
     return document.querySelectorAll('tbody input[type="checkbox"]');
 }
-
-checkAll.addEventListener('change', () => 
-{
-    getRowCheckboxes().forEach(checkbox => checkbox.checked = checkAll.checked);
-});
 
 $("#add_student").on("click", function() {
     clearModal();
@@ -52,7 +57,6 @@ $("#add_student").on("click", function() {
 
 })
 
-var currentRow;
 
 $('table').on('click', '.edit-btn', function() {
     clearModal();
@@ -97,45 +101,35 @@ $(document).on('click', '#addData', function(event)
     event.preventDefault();
 
     const user = {
-        id: $("#id_student").val() === "" ? String(id + 1) : $("#id_student").val(),
+        id: $("#id_student").val(),
         group: $("#group").val(), 
         firstName: $("#name").val(), 
         lastName: $("#surname").val(),
         gender: $("#gender").val(), 
-        birthday: $("#dob").val()
+        birthday: $("#dob").val(),
+        status: 1,
     };
-
+    console.log(user);
     clearModal();
     
     $.ajax({
-        url: 'server.php',
+        url: 'addStudent.php',
         method: 'POST',
         data: user,
         dataType: 'json',
         success: function(response) {
             if ($("#id_student").val())
             {  
-                currentRow.find('td:nth-child(3)').text(response.user.firstName + ' ' + response.user.lastName);
-                currentRow.find('td:nth-child(4)').text(genders[response.user.gender]);
-                currentRow.find('td:nth-child(5)').text(response.user.birthday);
-                currentRow.find('td:nth-child(2)').text(groups[response.user.group]);
+                currentRow.find('td:nth-child(3)').text(response.users.name + ' ' + response.users.surname);
+                currentRow.find('td:nth-child(4)').text(genders[response.users.gender]);
+                currentRow.find('td:nth-child(5)').text(response.users.birthday);
+                currentRow.find('td:nth-child(2)').text(groups[response.users.uni_group]);
                         
                 $('#addModal').modal('hide');
             }
             else
             {
-                id++;
-                var html =  '<tr class="text-center" data-id="' + response.user.id + '">' +
-                    '<td><input type="checkbox" name="select"></td>\
-                    <td>' + groups[response.user.group] + '</td>\
-                    <td>' + response.user.firstName + ' ' + user.lastName + '</td>\
-                    <td>' + genders[response.user.gender] + '</td>\
-                    <td>' + response.user.birthday + '</td>\
-                    <td><figure class="circle-green"></figure></td>' 
-                    + '<td><button class="btn bg-transparent edit-btn icon-holder"><i class=" far fa-edit edit-btn"></i></button>\
-                    <button class="btn bg-transparent delete-btn icon-holder"><i class="fas fa-trash-alt "></i></button></td></tr>';
-
-                $('table tbody').append(html);
+                addStudent(response.users);
                 $('#addModal').modal('hide');
             }
         }, 
@@ -143,7 +137,7 @@ $(document).on('click', '#addData', function(event)
           if (xhr.status === 400)
           {
             var response = JSON.parse(xhr.responseText);
-            if (response.errors.group) {
+            if (response.errors.uni_group) {
                 $("#group").addClass('is-invalid');
                 $("#group-error").text(response.errors.group);
                 $("#group-error").prop('hidden', false);
@@ -151,7 +145,7 @@ $(document).on('click', '#addData', function(event)
                 $("#group").addClass('is-valid');
             }
             
-            if (response.errors.firstName) {
+            if (response.errors.name) {
                 $("#name").addClass('is-invalid');
                 $("#first-name-error").text(response.errors.firstName);
                 $("#first-name-error").prop('hidden', false);
@@ -159,7 +153,7 @@ $(document).on('click', '#addData', function(event)
                 $("#name").addClass('is-valid');
             }
 
-            if (response.errors.lastName) {
+            if (response.errors.surname) {
                 $("#surname").addClass('is-invalid');
                 $("#last-name-error").text(response.errors.lastName);
                 $("#last-name-error").prop('hidden', false);
@@ -183,7 +177,7 @@ $(document).on('click', '#addData', function(event)
                 $("#dob").addClass('is-valid');
             }
           }
-          else {//
+          else {
             alert("Error: " + error);
           }
         }
@@ -193,14 +187,18 @@ $(document).on('click', '#addData', function(event)
 
 $('table').on('click', '.delete-btn', function() 
 {
+    const user = {
+        id: $(this).closest("tr").data("id")
+    }
     var row = $(this).closest('tr');
+
     $('#confirmModal').modal('show');
             
     $('#confirmDelete').click(function() 
     {
-        row.remove();
+        deleteStudent(user, row)
         $('#confirmModal').modal('hide');
-	});
+    });
 
 });
 
@@ -212,4 +210,56 @@ if ('serviceWorker' in navigator) {
             console.log('ServiceWorker registration failed: ', err);
         });
     });
+}
+
+function updateTable()
+{
+    $.ajax({
+        url: 'updateTable.php',
+        method: 'GET',
+        dataType: 'json',
+        success: function(response){
+            console.log(response);
+            for(user in response.users) {
+                console.log(response.users[user]);
+                addStudent(response.users[user]);
+            }
+     
+        },
+        error: function(xhr, error)
+        {
+            alert("Error: " + error);
+        }
+    });
+}
+
+function deleteStudent(user, row)
+{
+    $.ajax({
+        url: 'deleteStudent.php',
+        method: 'POST',
+        data: user,
+        dataType: 'json',
+        success: function(response) {
+            row.remove();
+        }, 
+        error: function(xhr, error) {
+            alert("Error: " + error);
+        }
+    });
+}
+
+function addStudent(user)
+{
+    var html =  '<tr class="text-center" data-id="' + user.id + '">' +
+    '<td><input type="checkbox" name="select"></td>\
+    <td>' + groups[user.uni_group] + '</td>\
+    <td>' + user.name + ' ' + user.surname + '</td>\
+    <td>' + genders[user.gender] + '</td>\
+    <td>' + user.birthday + '</td>\
+    <td><figure class="circle-green"></figure></td>' 
+    + '<td><button class="btn bg-transparent edit-btn icon-holder"><i class=" far fa-edit edit-btn"></i></button>\
+    <button class="btn bg-transparent delete-btn icon-holder"><i class="fas fa-trash-alt "></i></button></td></tr>';
+
+    $('table tbody').append(html);
 }
