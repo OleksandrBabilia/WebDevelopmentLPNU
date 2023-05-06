@@ -148,9 +148,13 @@
                 <label for="dob">Date of Birth</label>
                 <input type="date" class="form-control" id="dob" >
                 <div id="birthday-error" class="invalid-feedback" hidden>
-
+                
                 </div>
               </div>
+              <div class="form-group"  id="server-error-addModal" hidden>
+              
+              </div>
+              
             </form>
           </div>
           <div class="modal-footer">
@@ -171,7 +175,11 @@
             </button>
           </div>
           <div class="modal-body">
+          <input type="number" class="d-none" id="id_delete_student">
             Are you sure you want to delete this student?
+          </div>
+          <div class="form-group" id="server-error-deleteModal" hidden>
+              
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

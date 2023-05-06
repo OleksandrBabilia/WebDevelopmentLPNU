@@ -51,12 +51,13 @@ $("#add_student").on("click", function() {
     $('#id_student').val('');
     $("#addModal h5").html("Add student");
 
+    $('#group').val('0');
+    $('#gender').val('0');
     $('#name').val('');
     $('#surname').val('');
     $('#dob').val('');
 
 })
-
 
 $('table').on('click', '.edit-btn', function() {
     clearModal();
@@ -94,6 +95,7 @@ function clearModal() {
     $("#last-name-error").prop('hidden', true);
     $("#gender-error").prop('hidden', true);
     $("#birthday-error").prop('hidden', true);
+    $("#server-error-addModal").prop('hidden', true);
 }
 
 $(document).on('click', '#addData', function(event) 
@@ -102,20 +104,29 @@ $(document).on('click', '#addData', function(event)
 
     const user = {
         id: $("#id_student").val(),
-        group: $("#group").val(), 
-        firstName: $("#name").val(), 
-        lastName: $("#surname").val(),
+        uni_group: $("#group").val(), 
+        name: $("#name").val(), 
+        surname: $("#surname").val(),
         gender: $("#gender").val(), 
         birthday: $("#dob").val(),
         status: 1,
     };
-    console.log(user);
-    clearModal();
     
+    clearModal();
+    var action = 'CREATE';
+    if ($("#id_student").val())
+    {
+        action = 'UPDATE';
+    }
+
+    console.log(user);
     $.ajax({
-        url: 'addStudent.php',
+        url: 'requestHandler.php',
         method: 'POST',
-        data: user,
+        data: {
+            action: action,
+            users: user
+        },
         dataType: 'json',
         success: function(response) {
             if ($("#id_student").val())
@@ -137,9 +148,10 @@ $(document).on('click', '#addData', function(event)
           if (xhr.status === 400)
           {
             var response = JSON.parse(xhr.responseText);
+            console.log(response);
             if (response.errors.uni_group) {
                 $("#group").addClass('is-invalid');
-                $("#group-error").text(response.errors.group);
+                $("#group-error").text(response.errors.uni_group);
                 $("#group-error").prop('hidden', false);
             } else {
                 $("#group").addClass('is-valid');
@@ -147,7 +159,7 @@ $(document).on('click', '#addData', function(event)
             
             if (response.errors.name) {
                 $("#name").addClass('is-invalid');
-                $("#first-name-error").text(response.errors.firstName);
+                $("#first-name-error").text(response.errors.name);
                 $("#first-name-error").prop('hidden', false);
             } else {
                 $("#name").addClass('is-valid');
@@ -155,7 +167,7 @@ $(document).on('click', '#addData', function(event)
 
             if (response.errors.surname) {
                 $("#surname").addClass('is-invalid');
-                $("#last-name-error").text(response.errors.lastName);
+                $("#last-name-error").text(response.errors.surname);
                 $("#last-name-error").prop('hidden', false);
             } else {
                 $("#surname").addClass('is-valid');
@@ -178,28 +190,29 @@ $(document).on('click', '#addData', function(event)
             }
           }
           else {
-            alert("Error: " + error);
+            $("#server-error-addModal").text("Error: "+ xhr.statusText);
+            $("#server-error-addModal").prop('hidden', false);
           }
         }
     });
 });
 
-
 $('table').on('click', '.delete-btn', function() 
 {
-    const user = {
-        id: $(this).closest("tr").data("id")
-    }
     var row = $(this).closest('tr');
+    var name = row.find(".user-name").text()
+    var data = row.data("id");
+
+    $("#server-error-deleteModal").prop('hidden', true);
+    $(".modal-body").html("Are you sure you want to delete " + name + "?");
 
     $('#confirmModal').modal('show');
             
     $('#confirmDelete').click(function() 
     {
-        deleteStudent(user, row)
-        $('#confirmModal').modal('hide');
+        deleteStudent(data, row)
+        
     });
-
 });
 
 if ('serviceWorker' in navigator) {
@@ -215,20 +228,20 @@ if ('serviceWorker' in navigator) {
 function updateTable()
 {
     $.ajax({
-        url: 'updateTable.php',
-        method: 'GET',
+        url: 'requestHandler.php',
+        method: 'POST',
         dataType: 'json',
+        data: { action: 'READ' },
         success: function(response){
             console.log(response);
             for(user in response.users) {
                 console.log(response.users[user]);
                 addStudent(response.users[user]);
             }
-     
         },
         error: function(xhr, error)
         {
-            alert("Error: " + error);
+            alert("Error: "+ xhr.statusText)
         }
     });
 }
@@ -236,15 +249,20 @@ function updateTable()
 function deleteStudent(user, row)
 {
     $.ajax({
-        url: 'deleteStudent.php',
+        url: 'requestHandler.php',
         method: 'POST',
-        data: user,
+        data: {
+            id: user,
+            action: 'DELETE'
+        },
         dataType: 'json',
         success: function(response) {
             row.remove();
+            $('#confirmModal').modal('hide');
         }, 
         error: function(xhr, error) {
-            alert("Error: " + error);
+            $("#server-error-deleteModal").text("Error: "+ xhr.statusText);
+            $("#server-error-deleteModal").prop('hidden', false);
         }
     });
 }
@@ -254,7 +272,7 @@ function addStudent(user)
     var html =  '<tr class="text-center" data-id="' + user.id + '">' +
     '<td><input type="checkbox" name="select"></td>\
     <td>' + groups[user.uni_group] + '</td>\
-    <td>' + user.name + ' ' + user.surname + '</td>\
+    <td class="user-name">' + user.name + ' ' + user.surname + '</td>\
     <td>' + genders[user.gender] + '</td>\
     <td>' + user.birthday + '</td>\
     <td><figure class="circle-green"></figure></td>' 

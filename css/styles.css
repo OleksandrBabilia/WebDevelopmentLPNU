@@ -37,3 +37,13 @@
 .icon-holder:focus {
     box-shadow: none;
 }
+
+#server-error-addModal {
+    color: red;
+}
+
+#server-error-deleteModal {
+    color: red;
+    padding: 1rem;
+}
+  

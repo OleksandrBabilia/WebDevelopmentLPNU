@@ -1,12 +1,18 @@
 <?php
-    function addStudent($conn, $user)
+    function updateStudent($conn, $user)
     {
         include 'constants.php';
 
         $query =
-            "INSERT INTO students (uni_group, name, surname, gender, birthday, status) 
-            VALUES ({$user['uni_group']}, '{$user['name']}', '{$user['surname']}', {$user['gender']}, '{$user['birthday']}', {$user['status']})";
-        $user['id'] = $conn->insert_id;
+            "UPDATE students
+            SET 
+                uni_group = {$user['uni_group']}, 
+                name = '{$user['name']}', 
+                surname = '{$user['surname']}', 
+                gender = {$user['gender']}, 
+                birthday = '{$user['birthday']}', 
+                status = {$user['status']}
+            WHERE id = {$user['id']}";
                 
         if ($conn->query($query) === false) {
             $response = array(

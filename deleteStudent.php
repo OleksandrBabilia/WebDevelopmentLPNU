@@ -1,47 +1,26 @@
 <?php
-    if($_SERVER['REQUEST_METHOD'] === 'POST'){
+    function deleteStudent($conn, $id)
+    {
         include 'constants.php';
-
-        $conn = new MySQLi(HOSTNAME, USERNAME, PASSWORD, DATABASE);
-
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-            header('HTTP/1.1 500 Internal Server Error');
-            header('Content-Type: application/json');
-            echo json_encode(array(
-                'status' => true, 
-                'errors' => 'Invalid request method.',
-                'users' => null
-            ));
-        }
-
-        if ($conn->query("DELETE FROM students WHERE id = {$_POST['id']}") === false) {
-            die("Connection failed: " . $conn->connect_error);
-            header('HTTP/1.1 500 Internal Server Error');
-            header('Content-Type: application/json');
-            echo json_encode(array(
-                'status' => true, 
-                'errors' => 'Invalid request method.',
-                'users' => null
-            ));
+        $query = "DELETE FROM students WHERE id = {$id}";
+        if ($conn->query($query) === false) {
+            //die("Connection failedd: " . $conn->connect_error);
+            $response = array(
+                'status' => false,
+                'message' => 'Bad query',
+                'errors' => 'Bad query: ' . $query. $conn->error,
+                'users' => $id 
+            );
+            return $response;
         } 
 
-        header('HTTP/1.1 200 OK');
-        header('Content-Type: application/json');
-        echo json_encode(array(
-            'status' => true, 
+        $response = array(
+            'status' => true,
+            'message' => 'OK',
             'errors' => null,
-            'users' => $_POST['id']
-        ));
-        
-        $conn->close();
-    } else{
-        header('HTTP/1.1 405 Method Not Allowed');
-        header('Content-Type: application/json');
-        echo json_encode(array(
-            'status' => true, 
-            'errors' => 'Invalid request method.',
-            'users' => null
-        ));
-    }   
+            'users' => $id
+            
+        );
+        return $response;
+    }  
 ?>
