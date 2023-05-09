@@ -204,7 +204,7 @@ $('table').on('click', '.delete-btn', function()
     var data = row.data("id");
 
     $("#server-error-deleteModal").prop('hidden', true);
-    $(".modal-body").html("Are you sure you want to delete " + name + "?");
+    $("#delete-text").html("Are you sure you want to delete " + name + "?");
 
     $('#confirmModal').modal('show');
             

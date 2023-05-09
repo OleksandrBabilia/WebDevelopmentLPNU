@@ -6,9 +6,11 @@
         $query =
             "INSERT INTO students (uni_group, name, surname, gender, birthday, status) 
             VALUES ({$user['uni_group']}, '{$user['name']}', '{$user['surname']}', {$user['gender']}, '{$user['birthday']}', {$user['status']})";
-        $user['id'] = $conn->insert_id;
+       
                 
         if ($conn->query($query) === false) {
+            $user['id'] = $conn->insert_id;
+
             $response = array(
                 'status' => false,
                 'message' => 'Bad query',
@@ -19,6 +21,8 @@
             return $response;
         }
 
+        $user['id'] = $conn->insert_id;
+        
         $response = array(
             'status' => true,
             'message' => 'OK',
