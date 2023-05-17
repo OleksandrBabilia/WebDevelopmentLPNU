@@ -6,5 +6,12 @@
     define("USERNAME", "pvi");
     define("PASSWORD", "");
     define("DATABASE", "students_db");
+    $conn = new MySQLi(HOSTNAME, USERNAME, PASSWORD, DATABASE);
+    //define("CONNECTION", $conn);
+
+    if ($conn->connect_error) {
+       throw new Exception("Connection error");
+       
+    }
 
 ?>

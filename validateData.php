@@ -3,7 +3,7 @@
     {
         $errors = array();
 
-        if ($user['uni_group'] === "0") {
+        if ($user['group_id'] === "0") {
             $errors['uni_group'] = 'Group field could not be empty.';
         }
 
@@ -15,7 +15,7 @@
             $errors['surname'] = 'Last name field could not be empty';
         } 
 
-        if ($user['gender'] === "0") {
+        if ($user['gender_id'] === "0") {
             $errors['gender'] = 'Gender field could not be empty.';
         }
 
@@ -31,7 +31,7 @@
             'status' => (empty($errors)) ? true : false,
             'message' => (empty($errors)) ? 'OK' : 'Bad Request',
             'errors' => (empty($errors)) ? null : $errors,
-            'users' => $user
+            'user' => $user
         );
 
         return $response;

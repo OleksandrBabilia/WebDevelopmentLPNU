@@ -75,6 +75,31 @@
                 <th>Status</th>
                 <th>Options</th> 
               </tr>
+              <?php 
+              $students = $conn->query("SELECT * FROM students"); 
+                
+              
+              foreach ($students as $student) {
+                 
+               ?>
+                     
+                      <tr class="text-center" data-id="<?= $student['id'] ?>">
+                        <td>
+                          <input type="checkbox" name="select">
+                        </td>    
+                        <td><?= $groups_arr[$student['group_id']] ?></td>    
+                        <td class="user-name" data-name='<?= $student['name']?>' data-surname='<?= $student['surname']?>'><?= $student['name'] . " " .   $student['surname'] ?></td>    
+                        <td><?= $genders_arr[$student['gender_id']] ?></td>    
+                        <td><?= $student['birthday'] ?></td>   
+                        <td><figure class="circle-green"></figure></td>
+                        <td>
+                          <button class="btn bg-transparent edit-btn icon-holder"><i class=" far fa-edit edit-btn"></i></button>    
+                          <button class="btn bg-transparent delete-btn icon-holder"><i class="fas fa-trash-alt "></i></button>
+                      </td>
+                    </tr>
+                    <?php  } 
+                    
+                  ?>
             </table>
           </div>
           <ul class="pagination justify-content-center">

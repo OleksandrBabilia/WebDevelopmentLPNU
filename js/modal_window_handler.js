@@ -1,20 +1,6 @@
 var id = 0;
 var currentRow;
 
-var genders = {
-    "1": "Male",
-    "2": "Female",
-};
-
-var groups = {
-    "1": "PZ-21",
-    "2": "PZ-22",
-    "3": "PZ-23",
-    "4": "PZ-24",
-    "5": "PZ-25",
-    "6": "PZ-26"
-};
-
 var gendersReverse = {
     "Male": "1",
     "Female": "2",
@@ -37,7 +23,6 @@ $(document).ready(function()
         getRowCheckboxes().forEach(checkbox => checkbox.checked = checkAll.checked);
     });
 
-    updateTable();
 });
 
 function getRowCheckboxes() 
@@ -67,8 +52,8 @@ $('table').on('click', '.edit-btn', function() {
     var user_id = $(this).closest("tr").data("id")
 	$("#id_student").val(user_id)
     currentRow = $(this).closest('tr');
-    var name = currentRow.find('td:nth-child(3)').text().split(' ')[0];
-    var surname = currentRow.find('td:nth-child(3)').text().split(' ')[1]; 
+    var name = currentRow.find('td:nth-child(3)').data('name');
+    var surname = currentRow.find('td:nth-child(3)').data('surname'); 
     var gender = currentRow.find('td:nth-child(4)').text();      
     var dob = currentRow.find('td:nth-child(5)').text();
     var group = currentRow.find('td:nth-child(2)').text();
@@ -104,43 +89,35 @@ $(document).on('click', '#addData', function(event)
 
     const user = {
         id: $("#id_student").val(),
-        uni_group: $("#group").val(), 
+        group_id: $("#group").val(), 
         name: $("#name").val(), 
         surname: $("#surname").val(),
-        gender: $("#gender").val(), 
+        gender_id: $("#gender").val(), 
         birthday: $("#dob").val(),
         status: 1,
     };
     
     clearModal();
-    var action = 'CREATE';
-    if ($("#id_student").val())
-    {
-        action = 'UPDATE';
-    }
 
     console.log(user);
     $.ajax({
-        url: 'requestHandler.php',
+        url: 'addEditStudent.php',
         method: 'POST',
-        data: {
-            action: action,
-            users: user
-        },
+        data: user,
         dataType: 'json',
         success: function(response) {
             if ($("#id_student").val())
             {  
-                currentRow.find('td:nth-child(3)').text(response.users.name + ' ' + response.users.surname);
-                currentRow.find('td:nth-child(4)').text(genders[response.users.gender]);
-                currentRow.find('td:nth-child(5)').text(response.users.birthday);
-                currentRow.find('td:nth-child(2)').text(groups[response.users.uni_group]);
+                currentRow.find('td:nth-child(3)').text(response.user.name + ' ' + response.user.surname);
+                currentRow.find('td:nth-child(4)').text(response.user.gender_id);
+                currentRow.find('td:nth-child(5)').text(response.user.birthday);
+                currentRow.find('td:nth-child(2)').text(response.user.group_id);
                         
                 $('#addModal').modal('hide');
             }
             else
             {
-                addStudent(response.users);
+                addStudent(response.user);
                 $('#addModal').modal('hide');
             }
         }, 
@@ -225,35 +202,13 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-function updateTable()
+function deleteStudent(id, row)
 {
     $.ajax({
-        url: 'requestHandler.php',
-        method: 'POST',
-        dataType: 'json',
-        data: { action: 'READ' },
-        success: function(response){
-            console.log(response);
-            for(user in response.users) {
-                console.log(response.users[user]);
-                addStudent(response.users[user]);
-            }
-        },
-        error: function(xhr, error)
-        {
-            alert("Error: "+ xhr.statusText)
-        }
-    });
-}
-
-function deleteStudent(user, row)
-{
-    $.ajax({
-        url: 'requestHandler.php',
+        url: 'deleteStudent.php',
         method: 'POST',
         data: {
-            id: user,
-            action: 'DELETE'
+            id: id,
         },
         dataType: 'json',
         success: function(response) {
@@ -271,9 +226,9 @@ function addStudent(user)
 {
     var html =  '<tr class="text-center" data-id="' + user.id + '">' +
     '<td><input type="checkbox" name="select"></td>\
-    <td>' + groups[user.uni_group] + '</td>\
-    <td class="user-name">' + user.name + ' ' + user.surname + '</td>\
-    <td>' + genders[user.gender] + '</td>\
+    <td>' + user.group_id + '</td>\
+    <td class="user-name" data-name='+ user.name +' data-surname='+ user.surname + '>' + user.name + ' ' + user.surname + '</td>\
+    <td>' + user.gender_id + '</td>\
     <td>' + user.birthday + '</td>\
     <td><figure class="circle-green"></figure></td>' 
     + '<td><button class="btn bg-transparent edit-btn icon-holder"><i class=" far fa-edit edit-btn"></i></button>\
