@@ -14,9 +14,9 @@ The CMS (Student's Manager) project aims to provide a user-friendly interface fo
 
 ## Features
 
-- **Student Listing**: Displays a table view of all student records, including details such as name, group, gender, birthday, and status.
-- **Add Student**: Allows users to add new student records to the system, providing relevant information such as name, group, gender, birthday.
-- **Edit Student**: Enables users to update existing student records, allowing modifications to student details, such as name, group, gender, birthday.
+- **Student Listing**: Displays a table view of all student records, including details such as name, ID, grade, and contact information.
+- **Add Student**: Allows users to add new student records to the system, providing relevant information such as name, ID, grade, and contact details.
+- **Edit Student**: Enables users to update existing student records, allowing modifications to student details, such as name, grade, or contact information.
 - **Delete Student**: Provides functionality to delete student records from the system, removing them from the table view.
 
 ## Project Highlights
@@ -27,8 +27,12 @@ The CMS (Student's Manager) project aims to provide a user-friendly interface fo
 - **CRUD Functionality**: The project implements basic CRUD operations, providing a seamless user experience for managing student information.
 - **Code Organization**: The project adheres to proper code organization and separation of concerns, ensuring maintainability and code reusability.
 
+## PWA Caching
+
+In addition to the core functionality, the CMS (Student's Manager) project also incorporates PWA (Progressive Web App) caching. This enables the application to be cached locally on the user's device, allowing offline access and improved performance. The caching mechanism ensures that the application is readily available even in the absence of an internet connection, providing a seamless experience for users.
+
 ## Conclusion
 
-The CMS (Student's Manager) project demonstrates fundamental web development skills using HTML, CSS, JavaScript, jQuery, Bootstrap, PHP, and MySQL. It serves as a practical showcase of CRUD operations and provides a solid foundation for managing student records in a web-based application.
+The CMS (Student's Manager) project demonstrates fundamental web development skills using HTML, CSS, JavaScript, jQuery, Bootstrap, PHP, and MySQL. It serves as a practical showcase of CRUD operations, PWA caching, and provides a solid foundation for managing student records in a web-based application.
 
 If you have any questions or would like to learn more about the CMS (Student's Manager) project, please feel free to reach out.
